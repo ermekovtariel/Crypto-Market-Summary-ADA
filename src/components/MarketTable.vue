@@ -1,7 +1,9 @@
 <script setup lang="ts">
+defineOptions({ name: 'MarketTable' });
+
 import { computed, ref } from "vue";
 import type { MarketItem } from "@/types/api";
-import { formatPrice, formatPct, formatVol } from "@/utils/format";
+import { formatPrice, formatPct } from "@/utils/format";
 import Sparkline from "@/components/Sparkline.vue";
 
 const props = defineProps<{
@@ -24,9 +26,8 @@ function setSort(k: SortKey) {
   }
 }
 
-// стрелка и aria-sort только для активной колонки
 function sortIcon(k: SortKey) {
-  if (sortKey.value !== k) return ""; // или верни "↕", если хочешь нейтральную стрелку
+  if (sortKey.value !== k) return ""; 
   return sortDir.value === 1 ? "↑" : "↓";
 }
 function ariaSort(k: SortKey) {
@@ -43,15 +44,28 @@ const filtered = computed(() => {
   });
 });
 
+type Maybe<T> = T | null | undefined;
+type MaybePrice = { price?: Maybe<number>; priceLast?: Maybe<number> };
+type MaybeVolume = { volQuote?: Maybe<number>; volBase?: Maybe<number>; volume24h?: Maybe<number> };
+
+function toNumberOrNegInf(v: Maybe<number>) { return v ?? Number.NEGATIVE_INFINITY; }
+function pickPrice(m: MarketItem) {
+  const mm = m as unknown as Partial<MaybePrice>;
+  return toNumberOrNegInf(mm.priceLast ?? mm.price);
+}
+function pickVolume(m: MarketItem) {
+  const mm = m as unknown as Partial<MaybeVolume>;
+  return toNumberOrNegInf(mm.volQuote ?? mm.volBase ?? mm.volume24h);
+}
+
 const sorted = computed(() => {
   const k = sortKey.value;
   const dir = sortDir.value;
   return [...filtered.value].sort((a, b) => {
-    // устойчивость к разным наборам полей
-    const aPrice = (a as any).priceLast ?? (a as any).price ?? Number.NEGATIVE_INFINITY;
-    const bPrice = (b as any).priceLast ?? (b as any).price ?? Number.NEGATIVE_INFINITY;
-    const aVol = (a as any).volQuote ?? (a as any).volBase ?? (a as any).volume24h ?? Number.NEGATIVE_INFINITY;
-    const bVol = (b as any).volQuote ?? (b as any).volBase ?? (b as any).volume24h ?? Number.NEGATIVE_INFINITY;
+    const aPrice = pickPrice(a);
+    const bPrice = pickPrice(b);
+    const aVol = pickVolume(a);
+    const bVol = pickVolume(b);
 
     const av = k === "pair" ? a.pair
       : k === "price" ? aPrice
@@ -68,11 +82,15 @@ const sorted = computed(() => {
   });
 });
 
-// раскрытие строки с графиком
 const opened = ref<string | null>(null);
 function toggleRow(pair: string) {
   opened.value = opened.value === pair ? null : pair;
 }
+
+const COLS = 3; 
+const isInitialEmpty = computed(() => props.items.length === 0);
+const isFilteredEmpty = computed(() => filtered.value.length === 0);
+
 </script>
 
 <template>
@@ -104,10 +122,8 @@ function toggleRow(pair: string) {
         </tr>
       </thead>
 
-      <tbody>
-        <!-- и основная, и раскрытая строки — внутри одного template v-for -->
+      <tbody v-if="!isFilteredEmpty">
         <template v-for="it in sorted" :key="it.pair">
-          <!-- основная строка -->
           <tr
             @click="toggleRow(it.pair)"
             class="row-main"
@@ -129,13 +145,12 @@ function toggleRow(pair: string) {
             </td>
           </tr>
 
-          <!-- раскрытая строка: динамика/спарклайн -->
           <tr v-if="opened === it.pair">
-            <td :colspan="3" class="expand-cell">
+            <td :colspan="COLS" class="expand-cell">
               <div class="expand-wrap">
                 <div class="expand-title">
                   Динамика {{ it.pair }}
-                  <span class="muted">({{ it.history?.length ?? 0 }} точек)</span>
+                  <span class="muted">({{ it.history?.length ?? 0 }} points)</span>
                 </div>
 
                 <div
@@ -147,7 +162,7 @@ function toggleRow(pair: string) {
                 </div>
 
                 <div class="stats">
-                  <div>Last: <span class="stat-strong">{{ formatPrice((it as any).priceLast ?? (it as any).price ?? null) }}</span></div>
+                  <div>Last: <span class="stat-strong">{{ formatPrice(pickPrice(it)) }}</span></div>
                   <div>Min: <span class="stat-strong">{{ formatPrice(it.low24h ?? null) }}</span></div>
                   <div>Max: <span class="stat-strong">{{ formatPrice(it.high24h ?? null) }}</span></div>
                 </div>
@@ -155,6 +170,14 @@ function toggleRow(pair: string) {
             </td>
           </tr>
         </template>
+      </tbody>
+
+      <tbody v-else>
+        <tr>
+          <td :colspan="COLS" class="empty">
+            {{ isInitialEmpty ? 'Empty' : 'Not found' }}
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -168,13 +191,12 @@ th { background: #fbfbfc; font-weight: 600; cursor: pointer; white-space: nowrap
 th span { opacity: .2; margin-left: .25rem; }
 th span.active { opacity: .9; }
 
-
 .row-main:hover td {
   background: #fff;
   transition: background .2s, color .2s;
-  cursor: pointer;
   font-weight: 600;
   font-size: 1.10rem;
+  cursor: pointer;
 }
 
 .pair-main { font-weight: 600; }
@@ -183,13 +205,19 @@ th span.active { opacity: .9; }
 .down { color: #b42318 !important; }
 .hl { white-space: nowrap; }
 
-/* раскрытый блок */
 .expand-cell { padding: .75rem; background: #f6f8fa; }
 .expand-wrap { display: grid; gap: .5rem; }
 .expand-title { font-weight: 600; }
 .muted { opacity: .65; font-weight: 400; }
 .stats { display: flex; gap: 1rem; font-size: .85rem; opacity: .9; }
 .stat-strong { font-weight: 600; color: #111; }
+
+.empty {
+  text-align: center;
+  padding: 1rem 0;
+  color: #6b7280;
+  font-size: .95rem;
+}
 
 @media (prefers-color-scheme: dark) {
   th { background: #0f1115; color: #fff; }

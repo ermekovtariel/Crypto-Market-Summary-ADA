@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ name: 'MarketToolbar' });
+
 import { ref, watch } from "vue";
 import { useMarketStore } from "@/stores/market";
 
@@ -6,7 +8,6 @@ const store = useMarketStore();
 
 const q = defineModel<string>("q", { default: "" });
 const base = defineModel<string | null>("base", { default: null });
-const quote = defineModel<string | null>("quote", { default: null });
 
 const interval = ref(store.intervalMs.toString());
 
@@ -20,17 +21,12 @@ watch(interval, (v) => {
 
 <template>
   <div class="toolbar">
-    <input class="ctrl search" v-model="q" placeholder="Поиск по паре (например, XBT-AUD)" />
+    <input class="ctrl search" v-model="q" placeholder="Search..." />
 
     <select class="ctrl base" v-model="base">
       <option :value="null">Base: All</option>
       <option v-for="b in store.baseList" :key="b" :value="b">{{ b }}</option>
     </select>
-
-    <!-- <select class="ctrl quote" v-model="quote">
-      <option :value="null">Quote: All</option>
-      <option v-for="q in store.quoteList" :key="q" :value="q">{{ q }}</option>
-    </select> -->
 
     <label class="ctrl interval">
       <span class="interval-label">Polling (ms):</span>
@@ -46,7 +42,7 @@ watch(interval, (v) => {
 </template>
 
 <style scoped>
-/* базовые контролы */
+
 .ctrl { min-height: 40px; }
 input, select, button {
   padding: .5rem .65rem;
@@ -62,7 +58,6 @@ button:hover { filter: brightness(0.95); }
 .interval-label { white-space: nowrap; opacity: .85; }
 .status { opacity: .8; font-size: .9rem; }
 
-/* GRID-области: удобно менять раскладку под брейкпоинты */
 .toolbar {
   display: grid;
   grid-template-columns: 1.2fr 0.6fr 0.6fr auto auto auto;
@@ -72,7 +67,6 @@ button:hover { filter: brightness(0.95); }
   align-items: center;
 }
 
-/* привязка элементов к областям */
 .search  { grid-area: search; }
 .base    { grid-area: base; }
 .interval{ grid-area: interval; }
@@ -81,7 +75,6 @@ button:hover { filter: brightness(0.95); }
 
 /* ====== адаптив ====== */
 
-/* планшеты / узкие ноуты */
 @media (max-width: 1024px) {
   .toolbar {
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -93,7 +86,6 @@ button:hover { filter: brightness(0.95); }
   .status { justify-self: start; margin-top: .25rem; }
 }
 
-/* мобильные ≥ 640px → две колонки */
 @media (max-width: 640px) {
   .toolbar {
     grid-template-columns: 1fr 1fr;
@@ -103,12 +95,11 @@ button:hover { filter: brightness(0.95); }
       "interval refresh"
       "status status";
   }
-  input, select, button { width: 100%; }  /* тянуться на всю ширину ячейки */
-  .interval input { width: 100%; }       /* число — тоже резиновое */
+  input, select, button { width: 100%; }  
+  .interval input { width: 100%; }       
   .status { font-size: .85rem; }
 }
 
-/* маленькие телефоны — одна колонка */
 @media (max-width: 420px) {
   .toolbar {
     grid-template-columns: 1fr;
@@ -122,8 +113,7 @@ button:hover { filter: brightness(0.95); }
   .status { justify-self: start; }
 }
 
-/* удобочитаемость на touch-экранах */
 @media (pointer: coarse) {
-  .ctrl { min-height: 44px; } /* Apple рекомендация по высоте тача */
+  .ctrl { min-height: 44px; } 
 }
 </style>

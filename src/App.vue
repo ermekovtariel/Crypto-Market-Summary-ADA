@@ -10,7 +10,7 @@ const q = ref("");
 const base = ref<string | null>(null);
 
 onMounted(async () => {
-  await store.loadCurrencies(); // не блокируем UI, но полезно для списков
+  await store.loadCurrencies();
   await store.loadMarket();
   store.startPolling(5000);
 });

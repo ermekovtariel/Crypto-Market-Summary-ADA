@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ name: 'PriceSparkline' });
+
 import { computed, ref } from "vue";
 
 const props = withDefaults(defineProps<{
