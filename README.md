@@ -1,6 +1,4 @@
-
 ## > npm i zod
-## > echo 'VITE_API_BASE=https://user26614.requestly.tech' > .env
 ## > npm run dev
 
 # crypto-market
