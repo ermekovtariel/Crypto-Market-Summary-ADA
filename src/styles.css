@@ -1,0 +1,52 @@
+:root {
+    color-scheme: light dark;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+    background: #fff;
+    color: #111;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #0b0b0c;
+        color: #eee;
+    }
+    input,
+    select,
+    button {
+        background: #0f1115;
+        color: #eee;
+        border-color: #333;
+    }
+    .table-wrap {
+        border-color: #222;
+    }
+    th,
+    td {
+        border-color: #1a1d23;
+    }
+    th {
+        background: #0f1115;
+    }
+    tr:hover td {
+        background: #0d0e12;
+    }
+    .error {
+        background: #2b1111;
+        border-color: #5a1c1c;
+        color: #ffb3b3;
+    }
+}

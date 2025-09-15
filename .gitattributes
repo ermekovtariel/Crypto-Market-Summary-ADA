@@ -1,0 +1,9 @@
+# Всегда хранить в репозитории LF
+* text=auto eol=lf
+
+# Исключения под Windows (если нужно CRLF)
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Скрипты и конфиги (явно LF)
+*.sh text eol=lf
