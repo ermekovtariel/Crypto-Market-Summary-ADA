@@ -1,7 +1,7 @@
 Site on [Vercel](https://crypto-market-summary-gamma.vercel.app/)
 
-## > npm i zod
-## > npm run dev
+> npm i zod
+> npm run dev
 
 # crypto-market
 
