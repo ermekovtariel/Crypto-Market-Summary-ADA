@@ -11,8 +11,8 @@ const DEV = import.meta.env.DEV;
 const BASE = DEV ? "" : (import.meta.env.VITE_API_BASE?.replace(/\/+$/, "") || "");
 
 const endpoints = {
-  currency: DEV ? "/api/currency" : "/test/api/currency",
-  market:   DEV ? "/api/market"   : "/test/api/market",
+  currency: DEV ? "/api/currency" : "/api/currency", //"/test/api/currency",
+  market:   DEV ? "/api/market"   : "/api/market" //"/test/api/market",
 };
 
 export class ApiError extends Error {
