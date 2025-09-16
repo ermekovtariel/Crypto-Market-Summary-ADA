@@ -7,12 +7,9 @@ import {
   type MarketItem,
 } from "@/types/api";
 
-const DEV = import.meta.env.DEV;
-const BASE = DEV ? "" : (import.meta.env.VITE_API_BASE?.replace(/\/+$/, "") || "");
-
 const endpoints = {
-  currency: DEV ? "/api/currency" : "/api/currency", //"/test/api/currency",
-  market:   DEV ? "/api/market"   : "/api/market" //"/test/api/market",
+  currency: "/api/currency",
+  market:   "/api/market",
 };
 
 export class ApiError extends Error {
@@ -25,10 +22,9 @@ export class ApiError extends Error {
 }
 
 async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, { signal, headers: { Accept: "application/json" } });
+  const res = await fetch(path, { signal, headers: { Accept: "application/json" } });
   if (!res.ok) throw new ApiError(`HTTP ${res.status} ${res.statusText}`, res.status);
-  const text = await res.text();
-  return text ? (JSON.parse(text) as T) : ([] as unknown as T);
+  return res.json() as Promise<T>;
 }
 
 export async function fetchCurrencies(signal?: AbortSignal): Promise<CurrencyMeta[]> {

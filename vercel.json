@@ -2,6 +2,6 @@
     "buildCommand": "npm run build",
     "outputDirectory": "dist",
     "rewrites": [
-        { "source": "/test/api/(.*)", "destination": "https://user26614.requestly.tech/test/api/$1" }
+        { "source": "/api/(.*)", "destination": "https://user26614.requestly.tech/test/api/$1" }
     ]
 }
