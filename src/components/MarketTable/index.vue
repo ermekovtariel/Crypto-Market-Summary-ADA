@@ -10,7 +10,6 @@ const props = defineProps<{
   items: MarketItem[];
   q: string;
   base: string | null;
-  quote: string | null;
 }>();
 
 type SortKey = "pair" | "price" | "change" | "volume";
@@ -39,8 +38,7 @@ const filtered = computed(() => {
   return props.items.filter((it) => {
     const inQuery = !q || it.pair.toLowerCase().includes(q);
     const inBase = !props.base || it.base === props.base;
-    const inQuote = !props.quote || it.quote === props.quote;
-    return inQuery && inBase && inQuote;
+    return inQuery && inBase;
   });
 });
 

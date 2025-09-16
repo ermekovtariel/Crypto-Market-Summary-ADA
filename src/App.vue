@@ -36,7 +36,7 @@ onMounted(async () => {
         <div v-if="store.loadingMarket">Data is loading…</div>
         <div v-else>Ready</div>
         <div class="meta">
-          Polling: <strong>{{ store.pollState }}</strong>,
+          Polling: <strong>{{ store.isPolling ? 'Polling…' : 'Idle' }}</strong>,
           interval: <strong>{{store.intervalMs}}ms</strong>
         </div>
       </div>

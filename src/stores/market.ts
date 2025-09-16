@@ -15,6 +15,7 @@ export const useMarketStore = defineStore("market", {
     _retries: 0,
   }),
   getters: {
+    isPolling: (state) => state._timer !== null,
     baseList: (s) => Array.from(new Set(s.market.map(m => m.base))).sort(),
     quoteList: (s) => Array.from(new Set(s.market.map(m => m.quote))).sort(),
     currencyIconMap: (s) => {
