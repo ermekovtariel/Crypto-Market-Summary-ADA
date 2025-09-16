@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useMarketStore } from "@/stores/market";
-import Toolbar from "@/components/Toolbar.vue";
-import MarketTable from "@/components/MarketTable.vue";
+import Toolbar from "@/components/Toolbar/index.vue";
+import MarketTable from "@/components/MarketTable/index.vue";
 
 const store = useMarketStore();
 

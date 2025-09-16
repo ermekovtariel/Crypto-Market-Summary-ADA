@@ -4,7 +4,7 @@ defineOptions({ name: 'MarketTable' });
 import { computed, ref } from "vue";
 import type { MarketItem } from "@/types/api";
 import { formatPrice, formatPct } from "@/utils/format";
-import Sparkline from "@/components/Sparkline.vue";
+import Sparkline from "@/components/Sparkline/index.vue";
 
 const props = defineProps<{
   items: MarketItem[];
@@ -183,47 +183,4 @@ const isFilteredEmpty = computed(() => filtered.value.length === 0);
   </div>
 </template>
 
-<style scoped>
-.table-wrap { border: 1px solid #e6e8eb; border-radius: 12px; overflow: auto; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: .65rem .75rem; border-bottom: 1px solid #f0f2f4; text-align: left; }
-th { background: #fbfbfc; font-weight: 600; cursor: pointer; white-space: nowrap; color: #000; }
-th span { opacity: .2; margin-left: .25rem; }
-th span.active { opacity: .9; }
-
-.row-main:hover td {
-  background: #fff;
-  transition: background .2s, color .2s;
-  font-weight: 600;
-  font-size: 1.10rem;
-  cursor: pointer;
-}
-
-.pair-main { font-weight: 600; }
-.pair-sub { opacity: .6; font-size: .85rem; }
-.up { color: #13854e !important; }
-.down { color: #b42318 !important; }
-.hl { white-space: nowrap; }
-
-.expand-cell { padding: .75rem; background: #f6f8fa; }
-.expand-wrap { display: grid; gap: .5rem; }
-.expand-title { font-weight: 600; }
-.muted { opacity: .65; font-weight: 400; }
-.stats { display: flex; gap: 1rem; font-size: .85rem; opacity: .9; }
-.stat-strong { font-weight: 600; color: #111; }
-
-.empty {
-  text-align: center;
-  padding: 1rem 0;
-  color: #6b7280;
-  font-size: .95rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  th { background: #0f1115; color: #fff; }
-  td { border-color: #1a1d23; }
-  .row-main:hover td { background: #0d0e12; color: inherit; }
-  .expand-cell { background: #0b0d11; }
-  .stat-strong { color: #eee; }
-}
-</style>
+<style scoped src="./MarketTable.scoped.css"></style>
